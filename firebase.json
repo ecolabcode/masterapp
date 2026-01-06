@@ -1,6 +1,10 @@
 {
   "functions": {
-    "source": "functions"
+    "source": "functions",
+    "predeploy": [
+      "npm --prefix \"$RESOURCE_DIR\" run lint",
+      "npm --prefix \"$RESOURCE_DIR\" run build"
+    ]
   },
   "hosting": {
     "source": ".",
@@ -10,6 +14,9 @@
         "source": "/api/**",
         "function": { "functionId": "api", "region": "europe-west1" }
       }
-    ]
+    ],
+    "frameworksBackend": {
+      "region": "europe-west1"
+    }
   }
 }
