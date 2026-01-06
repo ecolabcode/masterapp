@@ -1,0 +1,40 @@
+<mat-toolbar color="primary" class="toolbar">
+  <div class="left">
+    <a
+      mat-button
+      routerLink="/"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      Home
+    </a>
+
+    <a mat-button routerLink="/login" routerLinkActive="active" *ngIf="!isLoggedIn()"> Login </a>
+
+    <a mat-button routerLink="/financial-advisor" routerLinkActive="active" *ngIf="isLoggedIn()">
+      Financial Advisor
+    </a>
+
+    <a mat-button routerLink="/notes" routerLinkActive="active" *ngIf="isLoggedIn()">
+      Stock My Notes
+    </a>
+
+    <a mat-button routerLink="/account" routerLinkActive="active" *ngIf="isLoggedIn()">
+      My Account
+    </a>
+  </div>
+
+  <div class="right" *ngIf="isLoggedIn()">
+    <button mat-button (click)="auth.logout()">Logout</button>
+  </div>
+</mat-toolbar>
+
+<!-- Global Loading Overlay -->
+<div class="loading-overlay" *ngIf="isLoading()">
+  <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+</div>
+
+<router-outlet></router-outlet>
+
+<!-- Global Toast -->
+<app-toast></app-toast>

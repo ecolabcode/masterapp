@@ -1,0 +1,43 @@
+<div class="page">
+  <h2>Financial Advisor</h2>
+
+  <div *ngIf="data() as d">
+    <p class="muted">
+      Generated: <b>{{ d.generatedAt }}</b>
+    </p>
+
+    <h3>Upgrades</h3>
+    <div class="grid">
+      <mat-card class="card" *ngFor="let x of d.upgrades">
+        <h4>{{ x.name }} ({{ x.symbol }})</h4>
+        <p class="muted">{{ x.gradingCompany }}</p>
+        <p>
+          <b>{{ x.previousGrade }}</b> → <b>{{ x.newGrade }}</b>
+        </p>
+        <p class="muted">
+          Prev: {{ x.previousPrice ?? 'N/A' }} | New: {{ x.newPrice ?? 'N/A' }} | Current:
+          {{ x.currentPrice ?? 'N/A' }}
+        </p>
+      </mat-card>
+    </div>
+
+    <h3>Downgrades</h3>
+    <div class="grid">
+      <mat-card class="card" *ngFor="let x of d.downgrades">
+        <h4>{{ x.name }} ({{ x.symbol }})</h4>
+        <p class="muted">{{ x.gradingCompany }}</p>
+        <p>
+          <b>{{ x.previousGrade }}</b> → <b>{{ x.newGrade }}</b>
+        </p>
+        <p class="muted">
+          Prev: {{ x.previousPrice ?? 'N/A' }} | New: {{ x.newPrice ?? 'N/A' }} | Current:
+          {{ x.currentPrice ?? 'N/A' }}
+        </p>
+      </mat-card>
+    </div>
+
+    <div class="disclaimer">
+      <p class="muted" *ngFor="let t of d.disclaimers">• {{ t }}</p>
+    </div>
+  </div>
+</div>

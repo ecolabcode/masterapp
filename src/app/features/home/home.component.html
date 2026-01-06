@@ -1,0 +1,100 @@
+<main class="container">
+  <h1>Astral Card (PWA)</h1>
+
+  <p class="muted">
+    Your detected timezone: <b>{{ form.controls.timezone.value }}</b
+    >. This is used to interpret your birth date/time.
+  </p>
+
+  <form class="card" [formGroup]="form" (ngSubmit)="submit()">
+    <label>
+      Name
+      <input formControlName="name" placeholder="Your name" />
+      <small class="error" *ngIf="form.controls.name.touched && form.controls.name.invalid">
+        Name is required (min 2 chars).
+      </small>
+    </label>
+
+    <div class="row">
+      <label>
+        Birth date
+        <input type="date" formControlName="birthDate" />
+        <small
+          class="error"
+          *ngIf="form.controls.birthDate.touched && form.controls.birthDate.invalid"
+        >
+          Birth date is required.
+        </small>
+      </label>
+
+      <label>
+        Birth time (approx)
+        <input type="time" formControlName="birthTimeApprox" />
+
+        <small class="muted" *ngIf="unknownBirthTime">
+          Time is unknown — ascendant/houses/nodes may be omitted or approximate.
+        </small>
+
+        <p class="muted" *ngIf="unknownBirthTime">
+          Note: because birth time is unknown, ascendant/house-based results can be approximate or
+          omitted.
+        </p>
+      </label>
+    </div>
+
+    <label class="checkbox">
+      <input type="checkbox" formControlName="unknownBirthTime" />
+      Unknown birth time
+    </label>
+
+    <div class="row">
+      <label>
+        Country
+        <input formControlName="country" placeholder="Country" />
+        <small class="error" *ngIf="form.controls.country.touched && form.controls.country.invalid">
+          Country is required.
+        </small>
+      </label>
+
+      <label>
+        City
+        <input formControlName="city" placeholder="City" />
+        <small class="error" *ngIf="form.controls.city.touched && form.controls.city.invalid">
+          City is required.
+        </small>
+      </label>
+    </div>
+
+    <!-- allow user to override timezone -->
+    <label>
+      Timezone (optional override)
+      <input formControlName="timezone" placeholder="e.g. Europe/Madrid" />
+      <small class="muted">
+        If you were born in a different timezone than your current device, change it here.
+      </small>
+    </label>
+
+    <button type="submit" [disabled]="loading()">
+      {{ loading() ? 'Generating…' : 'Generate astral card' }}
+    </button>
+
+    <p class="error" *ngIf="error()">{{ error() }}</p>
+  </form>
+
+  <section class="card" *ngIf="result() as r">
+    <h2>Results</h2>
+
+    <p class="muted" *ngIf="form.controls.unknownBirthTime.value">
+      Note: because birth time is unknown, ascendant/house-based results can be approximate or
+      omitted.
+    </p>
+
+    <!-- keep the rest of your results rendering -->
+    <h3>Big 3</h3>
+    <ul>
+      <li><b>Solar:</b> {{ r.solarSign }}</li>
+      <li><b>Lunar:</b> {{ r.lunarSign }}</li>
+      <li><b>Ascendant:</b> {{ r.ascendantSign }}</li>
+    </ul>
+  </section>
+</main>

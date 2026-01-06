@@ -1,0 +1,14 @@
+<div class="stack">
+  <mat-card
+    class="toast"
+    *ngFor="let t of toast.toasts()"
+    [class.success]="t.type === 'success'"
+    [class.error]="t.type === 'error'"
+    [class.info]="t.type === 'info'"
+  >
+    <div class="row">
+      <div class="msg">{{ t.message }}</div>
+      <button mat-button (click)="toast.dismiss(t.id)">X</button>
+    </div>
+  </mat-card>
+</div>

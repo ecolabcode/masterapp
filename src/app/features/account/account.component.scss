@@ -1,0 +1,18 @@
+.page {
+  padding: 16px;
+  display: grid;
+  gap: 12px;
+}
+.card {
+  padding: 12px;
+  width: min(720px, 100%);
+}
+.form {
+  display: grid;
+  gap: 12px;
+}
+.actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}

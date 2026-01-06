@@ -1,0 +1,14 @@
+.page {
+  padding: 16px;
+  display: grid;
+  place-items: center;
+}
+.card {
+  width: min(520px, 100%);
+  padding: 16px;
+}
+.form {
+  display: grid;
+  gap: 12px;
+  padding-top: 12px;
+}

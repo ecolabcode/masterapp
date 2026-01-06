@@ -1,0 +1,33 @@
+.stack {
+  position: fixed;
+  top: 72px;
+  right: 12px;
+  display: grid;
+  gap: 10px;
+  z-index: 10001;
+  width: min(360px, calc(100vw - 24px));
+}
+
+.toast {
+  padding: 10px 12px;
+  border-left: 6px solid transparent;
+}
+.toast.success {
+  border-left-color: #2e7d32;
+}
+.toast.error {
+  border-left-color: #c62828;
+}
+.toast.info {
+  border-left-color: #1565c0;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+.msg {
+  font-size: 14px;
+}
