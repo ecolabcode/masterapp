@@ -150,13 +150,33 @@ const AstralCardSchema = {
   },
 };
 
+type JsonObject = Record<string, unknown>;
+
+function isRecord(v: unknown): v is Record<string, unknown> {
+  return typeof v === 'object' && v !== null;
+}
+
+function getErrorMessage(e: unknown): string {
+  if (e instanceof Error) return e.message;
+  return String(e);
+}
+
+type JsonSchemaWrapper = {
+  name?: string;
+  strict?: boolean;
+  schema?: unknown;
+};
+
 async function callOpenAIJsonSchema(args: {
   apiKey: string;
   model: string;
   system: string;
   user: string;
-  schema: any;
-}) {
+  schema: JsonSchemaWrapper;
+}): Promise<JsonObject> {
+  const schemaName = args.schema.name ?? 'output';
+  const schemaBody = args.schema.schema ?? args.schema;
+
   const resp = await fetch('https://api.openai.com/v1/responses', {
     method: 'POST',
     headers: {
@@ -172,9 +192,9 @@ async function callOpenAIJsonSchema(args: {
       text: {
         format: {
           type: 'json_schema',
-          name: args.schema.name ?? 'output',
+          name: schemaName,
           strict: true,
-          schema: args.schema.schema ?? args.schema,
+          schema: schemaBody,
         },
       },
     }),
@@ -183,15 +203,36 @@ async function callOpenAIJsonSchema(args: {
   const raw = await resp.text();
   if (!resp.ok) throw new Error(`OpenAI error ${resp.status}: ${raw}`);
 
-  const json = JSON.parse(raw);
-  const outputText: string =
-    (json.output_text as string | undefined) ??
-    (json.output?.[0]?.content?.[0]?.text as string | undefined) ??
+  const parsed = JSON.parse(raw) as unknown;
+  if (!isRecord(parsed)) throw new Error('Unexpected OpenAI response shape.');
+
+  const outputText =
+    (typeof parsed.output_text === 'string' ? parsed.output_text : undefined) ??
+    ((): string | undefined => {
+      // Best-effort fallback if output_text is not present
+      const out = (parsed as Record<string, unknown>)['output'];
+      if (!Array.isArray(out) || out.length === 0) return undefined;
+
+      const first = out[0];
+      if (!isRecord(first)) return undefined;
+
+      const content = first['content'];
+      if (!Array.isArray(content) || content.length === 0) return undefined;
+
+      const c0 = content[0];
+      if (!isRecord(c0)) return undefined;
+
+      const text = c0['text'];
+      return typeof text === 'string' ? text : undefined;
+    })() ??
     '';
 
   if (!outputText.trim()) throw new Error('OpenAI returned empty output_text.');
 
-  return JSON.parse(outputText);
+  const result = JSON.parse(outputText) as unknown;
+  if (!isRecord(result)) throw new Error('Model output is not a JSON object.');
+
+  return result as JsonObject;
 }
 
 // ✅ IMPORTANT: name this apiApp (NOT api)
@@ -250,11 +291,12 @@ If birth time is UNKNOWN:
     });
 
     return res.json(data);
-  } catch (e: any) {
-    console.error(e?.message ?? e);
+  } catch (e: unknown) {
+    const msg = getErrorMessage(e);
+    console.error(msg);
     return res.status(500).json({
       message: 'Failed to generate astral card.',
-      details: String(e?.message ?? e),
+      details: msg,
     });
   }
 });
